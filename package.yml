@@ -1,0 +1,18 @@
+package: community.lazycat.app.grimmory
+name: Grimmory
+version: 3.5.0
+description: "Self-hosted multi-user digital library: smart shelves, metadata lookup, built-in reader, Kobo/KOReader sync, OPDS and BookDrop."
+min_os_version: "1.5.0"
+homepage: https://github.com/grimmory-tools/grimmory
+author: grimmory-tools
+license: AGPL-3.0
+permissions:
+  required:
+    - net.internet
+locales:
+  zh:
+    name: Grimmory 电子书库
+    description: "多用户自托管电子书库：智能书架、元数据抓取、内置阅读器、Kobo/KOReader 同步、OPDS 与 BookDrop 自动导入。"
+  en:
+    name: Grimmory
+    description: "Self-hosted multi-user digital library: smart shelves, metadata lookup, built-in reader, Kobo/KOReader sync, OPDS and BookDrop."

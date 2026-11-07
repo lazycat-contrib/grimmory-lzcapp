@@ -1,0 +1,22 @@
+params:
+  - id: db_pw
+    type: secret
+    name: "数据库密码"
+    description: "Grimmory 与 MariaDB 之间的数据库密码（已预置随机值，无需修改）"
+    default_value: "fcb2d16813b6425a29c26824"
+    optional: false
+  - id: db_root_pw
+    type: secret
+    name: "数据库 root 密码"
+    description: "MariaDB root 密码（已预置随机值，无需修改）"
+    default_value: "82131e3c5495bbce2e4a4dc1"
+    optional: false
+
+locales:
+  zh:
+    db_pw:
+      name: "数据库密码"
+      description: "Grimmory 与 MariaDB 之间的数据库密码（已预置随机值，无需修改）"
+    db_root_pw:
+      name: "数据库 root 密码"
+      description: "MariaDB root 密码（已预置随机值，无需修改）"

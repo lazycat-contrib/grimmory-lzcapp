@@ -1,0 +1,70 @@
+application:
+  subdomain: grimmory
+  multi_instance: false
+  # 首启 SetupController(/api/v1/setup) 提供初始 admin 自助建号向导，
+  # 建号后端点自动关闭（papra/wikidocs 判例）→ 使用 public_path 开放，
+  # 登录由应用自己的账号体系负责。
+  public_path:
+    - /
+  upstreams:
+    - location: /package-licenses/
+      backend: file:///lzcapp/pkg/content/licenses/
+    - location: /
+      backend: http://grimmory:6060/
+services:
+  grimmory:
+    # upstream: ghcr.io/grimmory-tools/grimmory:v3.5.0
+    image: ghcr.1ms.run/grimmory-tools/grimmory:v3.5.0
+    # 首启等 mariadb 初始化完成再启动（应用内无等待/重试逻辑）
+    command: >-
+      /bin/sh -c "sleep 20; exec /usr/local/bin/entrypoint.sh java --enable-native-access=ALL-UNNAMED --enable-preview -jar /app/app.jar"
+    environment:
+      - USER_ID=1000
+      - GROUP_ID=1000
+      - TZ=Asia/Shanghai
+      - DATABASE_URL=jdbc:mariadb://mariadb:3306/grimmory
+      - DATABASE_USERNAME=grimmory
+      - DATABASE_PASSWORD={{PASSWORD_db_pw}}
+      - SWAGGER_ENABLED=false
+      # 本包不提供 OIDC，禁用相关端点
+      - FORCE_DISABLE_OIDC=true
+    depends_on:
+      - mariadb
+    binds:
+      # 应用数据（配置、缩略图等）
+      - /lzcapp/var/app:/app/data
+      # 电子书库
+      - /lzcapp/var/books:/books
+      # BookDrop 自动导入目录
+      - /lzcapp/var/bookdrop:/bookdrop
+  mariadb:
+    # upstream: lscr.io/linuxserver/mariadb:11.4.8（Docker Hub linuxserver/mariadb 同 digest）
+    image: docker.1ms.run/linuxserver/mariadb:11.4.8
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD={{PASSWORD_db_root_pw}}
+      - MYSQL_DATABASE=grimmory
+      - MYSQL_USER=grimmory
+      - MYSQL_PASSWORD={{PASSWORD_db_pw}}
+    binds:
+      - /lzcapp/var/mariadb:/config
+usage: |
+  Grimmory 是一个多用户自托管电子书库（Booklore 的延续项目）：
+  智能书架、元数据抓取（Google Books / Open Library / Amazon）、
+  内置 EPUB/PDF/漫画阅读器、Kobo 与 KOReader 同步、OPDS、
+  BookDrop 自动导入、Kindle 一键推送。
+
+  使用方法：
+  1. 首次打开应用会出现初始化向导，创建管理员账号后即开始使用；
+     该向导在首个用户创建后自动关闭。
+  2. 把电子书文件放入应用数据目录下的 books 文件夹即可在界面中
+     看到并管理；放入 bookdrop 文件夹的文件会被自动识别导入。
+  3. Kobo / KOReader / OPDS 客户端可在设置中获取接入地址与凭据。
+
+  说明：
+  - 本包未做实机验证，功能以官方文档为准：
+    https://grimmory.org/docs/getting-started
+  - 许可证 AGPL-3.0，随包分发，见 /package-licenses/。
+  - 数据库密码在部署时随机生成，两个服务间已自动保持一致。
