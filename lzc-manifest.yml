@@ -38,7 +38,7 @@ services:
       # BookDrop 自动导入目录
       - /lzcapp/var/bookdrop:/bookdrop
   mariadb:
-    # upstream: lscr.io/linuxserver/mariadb:11.4.8（Docker Hub linuxserver/mariadb 同 digest）
+    # upstream: linuxserver/mariadb:11.4.8
     image: docker.1ms.run/linuxserver/mariadb:11.4.8
     environment:
       - PUID=1000
