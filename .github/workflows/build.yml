@@ -1,4 +1,4 @@
-name: Build webhook-tester LPK
+name: Build grimmory LPK
 on:
   workflow_dispatch:
 permissions:
